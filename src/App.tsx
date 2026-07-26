@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AuthProvider, useAuth } from "@/lib/auth";
+import { supabaseConfigError } from "@/lib/supabase";
 import { LoginPage } from "@/pages/LoginPage";
 import { AppShell, type NavKey } from "@/components/AppShell";
 import { ProfessorDashboard } from "@/pages/ProfessorDashboard";
@@ -94,6 +95,29 @@ function Router() {
   const { profile, loading } = useAuth();
   const [nav, setNav] = useState<NavKey>("dashboard");
   const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
+
+  if (supabaseConfigError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-ink-50 p-6">
+        <div className="max-w-lg rounded-2xl bg-white border border-danger-200 p-8 shadow-soft">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="h-10 w-10 rounded-xl bg-danger-100 text-danger-600 flex items-center justify-center">
+              <span className="text-xl font-bold">!</span>
+            </div>
+            <h1 className="font-display text-lg font-bold text-ink-900">Configuration missing</h1>
+          </div>
+          <p className="text-sm text-ink-600 mb-4">{supabaseConfigError}</p>
+          <div className="rounded-xl bg-ink-50 p-4 text-xs text-ink-600 font-mono">
+            VITE_SUPABASE_URL=https://yfalhylroduqhsqctgll.supabase.co<br />
+            VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...your-key-here
+          </div>
+          <p className="text-xs text-ink-400 mt-4">
+            After creating the file, stop the dev server (Ctrl+C) and run <span className="font-mono">npm run dev</span> again.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
